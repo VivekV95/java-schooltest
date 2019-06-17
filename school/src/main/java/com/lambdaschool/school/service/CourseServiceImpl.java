@@ -9,12 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
+import java.util.Optional;
 
+@Transactional
 @Service(value = "courseService")
 public class CourseServiceImpl implements CourseService
 {
     @Autowired
     private CourseRepository courserepos;
+
+    @Override
+    public Course findCourseById(Long id) throws EntityNotFoundException {
+        return courserepos.findById(id).orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
+    }
 
     @Override
     public ArrayList<Course> findAll()
@@ -43,4 +50,5 @@ public class CourseServiceImpl implements CourseService
             throw new EntityNotFoundException(Long.toString(id));
         }
     }
+
 }
