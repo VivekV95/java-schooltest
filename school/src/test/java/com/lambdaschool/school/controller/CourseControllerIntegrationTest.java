@@ -1,5 +1,7 @@
 package com.lambdaschool.school.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lambdaschool.school.model.Course;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import org.junit.After;
 import org.junit.Before;
@@ -33,5 +35,20 @@ public class CourseControllerIntegrationTest {
     @Test
     public void whenMeasuredResponseTime() {
         given().when().get("/courses/courses").then().time(lessThan(5000L));
+    }
+
+    @Test
+    public void addNewCourse() throws Exception
+    {
+        Course cs = new Course("My New Course", null);
+        cs.setCourseid(17);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String stringCS = mapper.writeValueAsString(cs);
+
+        given().contentType("application/json")
+                .body(stringCS).when()
+                .post("/courses/course/add").then().statusCode(201);
+
     }
 }

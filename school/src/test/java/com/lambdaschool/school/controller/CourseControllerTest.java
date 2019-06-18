@@ -18,11 +18,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = CourseController.class, secure = false)
@@ -82,7 +85,6 @@ public class CourseControllerTest {
     @Test
     public void listAllCourses() throws Exception{
         String apiUrl = "/courses/courses";
-
         Mockito.when(courseService.findAll()).thenReturn(courseList);
 
         RequestBuilder rb = MockMvcRequestBuilders.get(apiUrl).accept(MediaType.APPLICATION_JSON);
@@ -93,5 +95,22 @@ public class CourseControllerTest {
         String er = mapper.writeValueAsString(courseList);
 
         assertEquals("Rest API Returns List", er, tr);
+    }
+
+    @Test
+    public void addNewCourse() throws Exception {
+        String apiUrl = "/courses/course/add";
+        Course course = new Course("Calculus", new Instructor("Jim"));
+
+        Mockito.when(courseService.save(any(Course.class))).thenReturn(course);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String courseString = mapper.writeValueAsString(course);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post(apiUrl)
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                .content(courseString);
+
+        mockMvc.perform(requestBuilder).andExpect(status().isCreated()).andDo(MockMvcResultHandlers.print());
     }
 }
