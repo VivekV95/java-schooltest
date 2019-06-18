@@ -1,8 +1,12 @@
 package com.lambdaschool.school.service;
 
 import com.lambdaschool.school.model.Course;
+import com.lambdaschool.school.model.Instructor;
+import com.lambdaschool.school.model.Student;
 import com.lambdaschool.school.repository.CourseRepository;
+import com.lambdaschool.school.repository.InstructorRepository;
 import com.lambdaschool.school.view.CountStudentsInCourses;
+import org.aspectj.apache.bcel.generic.InstructionCLV;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,9 @@ public class CourseServiceImpl implements CourseService
 {
     @Autowired
     private CourseRepository courserepos;
+
+    @Autowired
+    private InstructorRepository instructorrepos;
 
     @Override
     public Course findCourseById(long id) throws EntityNotFoundException {
@@ -35,6 +42,17 @@ public class CourseServiceImpl implements CourseService
     public ArrayList<CountStudentsInCourses> getCountStudentsInCourse()
     {
         return courserepos.getCountStudentsInCourse();
+    }
+
+    @Override
+    public Course save(Course course) {
+        Course newCourse = new Course();
+        newCourse.setCoursename(course.getCoursename());
+        newCourse.setCourseid(course.getCourseid());
+        instructorrepos.save(course.getInstructor());
+        newCourse.setInstructor(course.getInstructor());
+
+        return courserepos.save(newCourse);
     }
 
     @Transactional

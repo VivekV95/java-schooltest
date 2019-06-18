@@ -24,7 +24,7 @@ public class Course
 //    @JsonView(View.CoursesOnly.class)
     private Instructor instructor;
 
-    @ManyToMany(mappedBy = "courses", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "courses")
     @JsonIgnoreProperties("courses")
     private List<Student> students = new ArrayList<>();
 
